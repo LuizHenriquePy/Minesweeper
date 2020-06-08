@@ -131,7 +131,7 @@ class Minesweeper:
 
     def game_creator(self):
 
-        if self.x * self.y == 1:
+        if self.x * self.y == 400:
 
             size = 15
             
@@ -200,18 +200,18 @@ class Minesweeper:
             self.bgButton = PhotoImage(file = "images/bigGame/backgroundButton.png")
 
         if gameSize == 'small':
-            """
-            zero
-            one
-            two
-            three
-            four
-            five
-            six
-            seven
-            mine
-            flag
-            """
+            self.zero     = PhotoImage(file = "images/smallGame/zero.png")
+            self.one      = PhotoImage(file = "images/smallGame/one.png")
+            self.two      = PhotoImage(file = "images/smallGame/two.png")
+            self.three    = PhotoImage(file = "images/smallGame/three.png")
+            self.four     = PhotoImage(file = "images/smallGame/four.png")
+            self.five     = PhotoImage(file = "images/smallGame/five.png")
+            self.six      = PhotoImage(file = "images/smallGame/six.png")
+            self.seven    = PhotoImage(file = "images/smallGame/seven.png")
+            self.mine     = PhotoImage(file = "images/smallGame/mine.png")
+            self.explosion= PhotoImage(file = "images/smallGame/explosion.png")
+            self.flag     = PhotoImage(file = "images/smallGame/flag.png")
+            self.bgButton = PhotoImage(file = "images/smallGame/backgroundButton.png")
     
 
     def left_click(self, button, pos):

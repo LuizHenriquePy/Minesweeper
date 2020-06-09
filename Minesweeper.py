@@ -122,6 +122,8 @@ class Minesweeper:
         
         self.neighbors = NEIGHBORS
 
+        self.matrixButtons = [[y for y in range(self.y)] for x in range(self.x)]
+
         self.game_creator()
 
         self.window.resizable(0, 0)
@@ -131,7 +133,7 @@ class Minesweeper:
 
     def game_creator(self):
 
-        if self.x * self.y == 400:
+        if self.x > 25:
 
             size = 15
             
@@ -150,7 +152,7 @@ class Minesweeper:
                     
                 pos = [x, y]
 
-                label = Label(window, borderwidth=1, relief='groove', bg='darkgrey')
+                label = Label(window, borderwidth=1, relief='groove')
 
                 self.matrixButtons[x][y] = Button(self.window, image = self.bgButton)
                 self.matrixButtons[x][y].bind("<Button-3>", partial(self.right_click, self.matrixButtons[x][y]))
@@ -158,7 +160,7 @@ class Minesweeper:
                 if self.matrix[x][y] == 'M':
                         
                     self.mines.append(self.matrixButtons[x][y])
-                    self.matrixButtons[x][y].config(command = partial(self.game_over, self.matrixButtons[x][y]))
+                    self.matrixButtons[x][y].config(command = partial(self.game_over, self.matrixButtons[x][y], label))
 
                     label.config(image = self.mine)
 
@@ -259,34 +261,39 @@ class Minesweeper:
 
         if button['state'] == 'normal':
 
+            self.flags.append(button)
             button.config(image = self.flag)
             button['state'] = 'disabled'
+            self.victory()
 
         else:
-
+            self.flags.remove(button)
             button.config(image = self.bgButton)
             button['state'] = 'normal',
 
 
-    def victory(self, button):
+    def victory(self):
+        
+        for button in self.mines:
 
-        self.flags.append(button)
-
-        for x in self.flags:
-
-            if x not in self.flags:
+            if button not in self.flags:
+                
                 return
 
-        if len(self.flags) == len(self.mines):
+        if len(self.flags) != len(self.mines):
+
+                return
             
-            showinfo("Victory!", "You won")
+        showinfo("You win!", "You win!")
 
-            self.window.destroy()
+        self.window.destroy()
 
 
-    def game_over(self, button):
+    def game_over(self, button, label):
 
         button.destroy()
+
+        label.config(image = self.explosion)
 
         showinfo("Game Over!", "Game Over")
 

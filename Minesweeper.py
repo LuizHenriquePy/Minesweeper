@@ -137,13 +137,13 @@ class Minesweeper:
 
             size = 15
             
-            self.window.geometry(f"{self.x * size}x{self.y * size}")
+            self.window.geometry(f"{self.y * size}x{self.x * size}")
             self.images('big')
 
         else:
 
             size = 21
-            self.window.geometry(f"{self.x * size}x{self.y * size}")
+            self.window.geometry(f"{self.y * size}x{self.x * size}")
             self.images('small')
 
 
@@ -168,8 +168,8 @@ class Minesweeper:
                     self.matrixButtons[x][y].config(command = partial(self.left_click, self.matrixButtons[x][y], pos))
                     self.put_pictures(x, y, label)
 
-                label.place(x= x*size, y = y*size)
-                self.matrixButtons[x][y].place(x= x*size, y = y*size)
+                label.place(x= y*size, y = x*size)
+                self.matrixButtons[x][y].place(x= y*size, y = x*size)
 
 
     def put_pictures(self, x, y, label):

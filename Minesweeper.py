@@ -152,7 +152,7 @@ class Minesweeper:
                     
                 pos = [x, y]
 
-                label = Label(self.window, borderwidth=1, relief='groove')
+                label = Label(self.window, borderwidth=1, relief='groove', bg='darkgrey')
 
                 self.matrixButtons[x][y] = Button(self.window, image = self.bgButton)
                 self.matrixButtons[x][y].bind("<Button-3>", partial(self.right_click, self.matrixButtons[x][y]))

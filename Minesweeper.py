@@ -150,20 +150,35 @@ class Minesweeper:
 
             for y in range(self.numOfRows):
 
-                pos = [x, y]
-
                 self.matrixLabels[x][y] = Label(self.window, borderwidth=1, relief='groove', bg='darkgrey', image = self.zero)
                 self.matrixLabels[x][y].place(x = y*size, y = x*size)
 
                 self.matrixButtons[x][y] = Button(self.window, image = self.bgButton)
-                self.matrixButtons[x][y].config(command = partial(self.left_click, self.matrixButtons[x][y], pos))
+                self.matrixButtons[x][y].config(command = partial(self.left_click, self.matrixButtons[x][y], x, y))
                 self.matrixButtons[x][y].bind("<Button-3>", partial(self.right_click, self.matrixButtons[x][y]))
                 self.matrixButtons[x][y].place(x= y*size, y = x*size)
+    
 
+    def left_click(self, button, x, y):
 
-    def put_matrix_in_gui(self, pos):
+        if self.first_move == False:
 
-        x, y = pos
+            self.put_matrix_in_gui(button, x, y)
+
+        if self.matrix[x][y] == 'M':
+            
+            self.game_over(button, self.matrixLabels[x][y])
+
+        self.deletedButtons = []
+        button.destroy()
+        self.deletedButtons.append(button)
+
+        if self.matrix[x][y] == 0:
+            
+            self.delete_blank_buttons(x, y)
+
+    
+    def put_matrix_in_gui(self, button, x, y):
         
         while True:
 
@@ -175,21 +190,20 @@ class Minesweeper:
             
         for x in range(self.numOfRows):
 
-            for y in range(self.numOfRows):
-                    
-                pos = [x, y]
-
-                self.put_pictures(x, y, self.matrixLabels[x][y])
+            for y in range(self.numOfColumns):
 
                 if self.matrix[x][y] == 'M':
-
-                    self.matrixButtons[x][y].config(command = partial(self.game_over, self.matrixButtons[x][y], self.matrixLabels[x][y]))
+                    
                     self.matrixLabels[x][y].config(image = self.mine)
+                    self.mines.append(button)
+
+                else:
+
+                    self.put_pictures(x, y, self.matrixLabels[x][y])
 
 
     def put_pictures(self, x, y, label):
 
-            if self.matrix[x][y] == 0: label.config(image = self.zero)
             if self.matrix[x][y] == 1: label.config(image = self.one)
             if self.matrix[x][y] == 2: label.config(image = self.two)
             if self.matrix[x][y] == 3: label.config(image = self.three)
@@ -197,55 +211,6 @@ class Minesweeper:
             if self.matrix[x][y] == 5: label.config(image = self.five)
             if self.matrix[x][y] == 6: label.config(image = self.six)
             if self.matrix[x][y] == 7: label.config(image = self.seven)
-
-
-    def images(self, gameSize):
-
-        if gameSize == 'big': 
-            
-            self.zero     = PhotoImage(file = "images/bigGame/zero.png")
-            self.one      = PhotoImage(file = "images/bigGame/one.png")
-            self.two      = PhotoImage(file = "images/bigGame/two.png")
-            self.three    = PhotoImage(file = "images/bigGame/three.png")
-            self.four     = PhotoImage(file = "images/bigGame/four.png")
-            self.five     = PhotoImage(file = "images/bigGame/five.png")
-            self.six      = PhotoImage(file = "images/bigGame/six.png")
-            self.seven    = PhotoImage(file = "images/bigGame/seven.png")
-            self.mine     = PhotoImage(file = "images/bigGame/mine.png")
-            self.explosion= PhotoImage(file = "images/bigGame/explosion.png")
-            self.flag     = PhotoImage(file = "images/bigGame/flag.png")
-            self.bgButton = PhotoImage(file = "images/bigGame/backgroundButton.png")
-
-        if gameSize == 'small':
-            self.zero     = PhotoImage(file = "images/smallGame/zero.png")
-            self.one      = PhotoImage(file = "images/smallGame/one.png")
-            self.two      = PhotoImage(file = "images/smallGame/two.png")
-            self.three    = PhotoImage(file = "images/smallGame/three.png")
-            self.four     = PhotoImage(file = "images/smallGame/four.png")
-            self.five     = PhotoImage(file = "images/smallGame/five.png")
-            self.six      = PhotoImage(file = "images/smallGame/six.png")
-            self.seven    = PhotoImage(file = "images/smallGame/seven.png")
-            self.mine     = PhotoImage(file = "images/smallGame/mine.png")
-            self.explosion= PhotoImage(file = "images/smallGame/explosion.png")
-            self.flag     = PhotoImage(file = "images/smallGame/flag.png")
-            self.bgButton = PhotoImage(file = "images/smallGame/backgroundButton.png")
-    
-
-    def left_click(self, button, pos):
-
-        if self.first_move == False:
-
-            self.put_matrix_in_gui(pos)
-
-        x, y = pos
-
-        self.deletedButtons = []
-        button.destroy()
-        self.deletedButtons.append(button)
-
-        if self.matrix[x][y] == 0:
-            
-            self.delete_blank_buttons(x, y)
 
 
     def delete_blank_buttons(self, x, y):
@@ -320,6 +285,39 @@ class Minesweeper:
         showinfo("Game Over!", "you lost")
 
         self.window.destroy()
+
+
+    def images(self, gameSize):
+
+        if gameSize == 'big': 
+            
+            self.zero     = PhotoImage(file = "images/bigGame/zero.png")
+            self.one      = PhotoImage(file = "images/bigGame/one.png")
+            self.two      = PhotoImage(file = "images/bigGame/two.png")
+            self.three    = PhotoImage(file = "images/bigGame/three.png")
+            self.four     = PhotoImage(file = "images/bigGame/four.png")
+            self.five     = PhotoImage(file = "images/bigGame/five.png")
+            self.six      = PhotoImage(file = "images/bigGame/six.png")
+            self.seven    = PhotoImage(file = "images/bigGame/seven.png")
+            self.mine     = PhotoImage(file = "images/bigGame/mine.png")
+            self.explosion= PhotoImage(file = "images/bigGame/explosion.png")
+            self.flag     = PhotoImage(file = "images/bigGame/flag.png")
+            self.bgButton = PhotoImage(file = "images/bigGame/backgroundButton.png")
+
+        if gameSize == 'small':
+            self.zero     = PhotoImage(file = "images/smallGame/zero.png")
+            self.one      = PhotoImage(file = "images/smallGame/one.png")
+            self.two      = PhotoImage(file = "images/smallGame/two.png")
+            self.three    = PhotoImage(file = "images/smallGame/three.png")
+            self.four     = PhotoImage(file = "images/smallGame/four.png")
+            self.five     = PhotoImage(file = "images/smallGame/five.png")
+            self.six      = PhotoImage(file = "images/smallGame/six.png")
+            self.seven    = PhotoImage(file = "images/smallGame/seven.png")
+            self.mine     = PhotoImage(file = "images/smallGame/mine.png")
+            self.explosion= PhotoImage(file = "images/smallGame/explosion.png")
+            self.flag     = PhotoImage(file = "images/smallGame/flag.png")
+            self.bgButton = PhotoImage(file = "images/smallGame/backgroundButton.png")
+
 
     def config_window(self):
 

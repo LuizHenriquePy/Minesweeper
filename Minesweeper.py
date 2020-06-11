@@ -244,9 +244,11 @@ class Minesweeper:
                 if self.matrix[xN][yN] != 'M':
                             
                     if self.matrixButtons[xN][yN] not in self.deletedButtons:
-                                
-                        self.matrixButtons[xN][yN].destroy()
-                        self.deletedButtons.append(self.matrixButtons[xN][yN])
+
+                        if self.matrixButtons[xN][yN] not in self.flags:
+
+                            self.matrixButtons[xN][yN].destroy()
+                            self.deletedButtons.append(self.matrixButtons[xN][yN])
                             
                         if self.matrix[xN][yN] == 0:
                                     

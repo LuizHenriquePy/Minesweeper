@@ -269,7 +269,8 @@ class Minesweeper:
         else:
             self.flags.remove(button)
             button.config(image = self.bgButton)
-            button['state'] = 'normal',
+            button['state'] = 'normal'
+            self.victory()
 
 
     def victory(self):

@@ -109,67 +109,82 @@ class Matrix:
 
 class Minesweeper:
 
-    def __init__(self, window, matrix):
+    def __init__(self, window, numOfRows, numOfColumns, numOfMines):
 
-        self.matrix = matrix
-        self.x = len(self.matrix)
-        self.y = len(self.matrix[0])
+        self.numOfRows = numOfRows
+        self.numOfColumns = numOfColumns
+        self.numOfMines = numOfMines
 
         self.window = window
 
         self.flags = []
         self.mines = []
+
+        self.first_move = False
+        self.vict = False
         
         self.neighbors = NEIGHBORS
 
-        self.matrixButtons = [[y for y in range(self.y)] for x in range(self.x)]
+        self.matrixButtons = [[y for y in range(self.numOfColumns)] for x in range(self.numOfRows)]
+        self.matrixLabels = [[y for y in range(self.numOfColumns)] for x in range(self.numOfRows)]
 
-        self.game_creator()
+        self.main()
 
-        self.window.resizable(0, 0)
-        self.window.title('Minesweeper')
-        self.window.mainloop()
+    def gui_creator(self):
 
-
-    def game_creator(self):
-
-        if self.x > 25:
+        if self.numOfRows > 25:
 
             size = 15
             
-            self.window.geometry(f"{self.y * size}x{self.x * size}")
+            self.window.geometry(f"{self.numOfColumns * size}x{self.numOfRows * size}")
             self.images('big')
 
         else:
 
             size = 21
-            self.window.geometry(f"{self.y * size}x{self.x * size}")
+            self.window.geometry(f"{self.numOfColumns * size}x{self.numOfRows * size}")
             self.images('small')
 
 
-        for x in range(self.x):
-            for y in range(self.y):
+        for x in range(self.numOfRows):
+
+            for y in range(self.numOfRows):
+
+                pos = [x, y]
+
+                self.matrixLabels[x][y] = Label(self.window, borderwidth=1, relief='groove', bg='darkgrey', image = self.zero)
+                self.matrixLabels[x][y].place(x = y*size, y = x*size)
+
+                self.matrixButtons[x][y] = Button(self.window, image = self.bgButton)
+                self.matrixButtons[x][y].config(command = partial(self.left_click, self.matrixButtons[x][y], pos))
+                self.matrixButtons[x][y].bind("<Button-3>", partial(self.right_click, self.matrixButtons[x][y]))
+                self.matrixButtons[x][y].place(x= y*size, y = x*size)
+
+
+    def put_matrix_in_gui(self, pos):
+
+        x, y = pos
+        
+        while True:
+
+            self.matrix = Matrix(self.numOfRows, self.numOfColumns, self.numOfMines).main()
+
+            if self.matrix[x][y] == 0:
+
+                break
+            
+        for x in range(self.numOfRows):
+
+            for y in range(self.numOfRows):
                     
                 pos = [x, y]
 
-                label = Label(self.window, borderwidth=1, relief='groove', bg='darkgrey')
-
-                self.matrixButtons[x][y] = Button(self.window, image = self.bgButton)
-                self.matrixButtons[x][y].bind("<Button-3>", partial(self.right_click, self.matrixButtons[x][y]))
+                self.put_pictures(x, y, self.matrixLabels[x][y])
 
                 if self.matrix[x][y] == 'M':
-                        
-                    self.mines.append(self.matrixButtons[x][y])
-                    self.matrixButtons[x][y].config(command = partial(self.game_over, self.matrixButtons[x][y], label))
 
-                    label.config(image = self.mine)
-
-                else:
-                    self.matrixButtons[x][y].config(command = partial(self.left_click, self.matrixButtons[x][y], pos))
-                    self.put_pictures(x, y, label)
-
-                label.place(x= y*size, y = x*size)
-                self.matrixButtons[x][y].place(x= y*size, y = x*size)
+                    self.matrixButtons[x][y].config(command = partial(self.game_over, self.matrixButtons[x][y], self.matrixLabels[x][y]))
+                    self.matrixLabels[x][y].config(image = self.mine)
 
 
     def put_pictures(self, x, y, label):
@@ -217,6 +232,10 @@ class Minesweeper:
     
 
     def left_click(self, button, pos):
+
+        if self.first_move == False:
+
+            self.put_matrix_in_gui(pos)
 
         x, y = pos
 
@@ -298,9 +317,21 @@ class Minesweeper:
 
         label.config(image = self.explosion)
 
-        showinfo("Game Over!", "Game Over")
+        showinfo("Game Over!", "you lost")
 
         self.window.destroy()
+
+    def config_window(self):
+
+        self.window.resizable(0, 0)
+        self.window.title('Minesweeper')
+        self.window.mainloop()
+
+    
+    def main(self):
+        
+        self.gui_creator()
+        self.config_window()
 
 
 if __name__ == '__main__':
@@ -312,8 +343,7 @@ if __name__ == '__main__':
         mines = int(input("Type number of mines: "))
 
         window = Tk()
-        matrix = Matrix(rows, columns, mines).main()
-        Minesweeper(window, matrix)
+        Minesweeper(window, rows, columns, mines)
 
         r = str(input("Continue? ")).upper()
         if r[0] == 'N':

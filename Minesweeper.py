@@ -149,7 +149,6 @@ class Minesweeper:
         for x in range(self.numOfRows):
 
             for y in range(self.numOfRows):
-
                 self.matrixLabels[x][y] = Label(self.window, borderwidth=1, relief='groove', bg='darkgrey', image = self.zero)
                 self.matrixLabels[x][y].place(x = y*size, y = x*size)
 
@@ -162,11 +161,9 @@ class Minesweeper:
     def left_click(self, button, x, y):
 
         if self.first_move == False:
-
             self.put_matrix_in_gui(button, x, y)
 
-        if self.matrix[x][y] == 'M':
-            
+        if self.matrix[x][y] == 'M':  
             self.game_over(button, self.matrixLabels[x][y])
 
         self.deletedButtons = []
@@ -174,31 +171,26 @@ class Minesweeper:
         self.deletedButtons.append(button)
 
         if self.matrix[x][y] == 0:
-            
             self.delete_blank_buttons(x, y)
 
     
     def put_matrix_in_gui(self, button, x, y):
         
         while True:
-
             self.matrix = Matrix(self.numOfRows, self.numOfColumns, self.numOfMines).main()
 
             if self.matrix[x][y] == 0:
-
                 break
             
         for x in range(self.numOfRows):
 
             for y in range(self.numOfColumns):
 
-                if self.matrix[x][y] == 'M':
-                    
+                if self.matrix[x][y] == 'M': 
                     self.matrixLabels[x][y].config(image = self.mine)
                     self.mines.append(button)
 
                 else:
-
                     self.put_pictures(x, y, self.matrixLabels[x][y])
 
 
@@ -215,14 +207,11 @@ class Minesweeper:
 
     def delete_blank_buttons(self, x, y):
                 
-        for func in self.neighbors:
-                    
-            try:
-                        
+        for func in self.neighbors:   
+            try:                     
                 xN, yN = func(x, y)
 
                 if xN < 0 or yN < 0:
-                        
                     raise IndexError
                         
                 if self.matrix[xN][yN] != 'M':
@@ -230,23 +219,19 @@ class Minesweeper:
                     if self.matrixButtons[xN][yN] not in self.deletedButtons:
 
                         if self.matrixButtons[xN][yN] not in self.flags:
-
                             self.matrixButtons[xN][yN].destroy()
                             self.deletedButtons.append(self.matrixButtons[xN][yN])
                             
                         if self.matrix[xN][yN] == 0:
-                                    
                             self.delete_blank_buttons(xN, yN)
 
             except IndexError:
-                        
                 pass
 
 
     def right_click(self, button, event):
 
         if button['state'] == 'normal':
-
             self.flags.append(button)
             button.config(image = self.flag)
             button['state'] = 'disabled'
@@ -262,13 +247,11 @@ class Minesweeper:
     def victory(self):
         
         for button in self.mines:
-
+            
             if button not in self.flags:
-                
                 return
 
         if len(self.flags) != len(self.mines):
-
                 return
             
         showinfo("You win!", "You win!")
@@ -334,15 +317,34 @@ class Minesweeper:
 
 if __name__ == '__main__':
 
+    def config_scale_rows_and_column(event):
+        numMines = int(rows.get() * columns.get() * 0.2)
+        mines.set(numMines)
+
+    def config_scale_mines(event):
+
+        numOfSquares = mines.get() / 0.2
+
+        f = numOfSquares - columns.get() * rows.get()
+        ######
+        
     while True:
 
-        rows = int(input("Type number of rows: "))
-        columns = int(input("Type number of columns: "))
-        mines = int(input("Type number of mines: "))
+        screen = Tk()
 
-        window = Tk()
-        Minesweeper(window, rows, columns, mines)
+        Label(screen, text = "Rows").grid(row=0, column=0)
+        rows = Scale(screen, from_=10, to=50, width=15, command=config_scale_rows_and_column)
+        rows.grid(row=1, column=0)
 
-        r = str(input("Continue? ")).upper()
-        if r[0] == 'N':
-            break
+        Label(screen, text="Columns").grid(row=0, column=1)
+        columns = Scale(screen, from_=10, to=50, width=15, command=config_scale_rows_and_column)
+        columns.grid(row=1, column=1)
+
+        Label(screen, text="Mines").grid(row=0, column=2)
+        mines = Scale(screen, from_=20, to=500, width=15, command=config_scale_mines)
+        mines.grid(row=1, column=2)
+        
+        screen.mainloop()
+
+
+
